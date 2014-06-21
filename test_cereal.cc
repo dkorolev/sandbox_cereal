@@ -1,5 +1,3 @@
-// TODO(dkorolev): Add a death test for serialization parsing error.
-// TODO(dkorolev): Look into how Cereal serializes field names.
 // TODO(dkorolev): Look into Cereal's polymorphism when serializing objects.
 
 #include <gtest/gtest.h>
@@ -72,6 +70,12 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
         EXPECT_EQ("index 1", result.map_["foo"]);
         EXPECT_EQ("index 2", result.map_["meh"]);
     }
+    // Test that an exception will be thrown if the input can not be deserialized.
+    {
+        std::istringstream is(serialized.substr(0, serialized.length() - 1));
+        SimpleType tmp;
+        ASSERT_THROW((cereal::BinaryInputArchive(is))(tmp), cereal::Exception);
+    }
 }
 
 TEST(CerealTest, SimpleTypeJSONSerialization) { 
@@ -112,5 +116,11 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
         EXPECT_EQ("index 0", result.map_["bar"]);
         EXPECT_EQ("index 1", result.map_["foo"]);
         EXPECT_EQ("index 2", result.map_["meh"]);
+    }
+    // Test that an exception will be thrown if the input can not be deserialized.
+    {
+        std::istringstream is(serialized.substr(0, serialized.length() - 2));  // Minus the added newline as well.
+        SimpleType tmp;
+        ASSERT_THROW((cereal::JSONInputArchive(is))(tmp), cereal::Exception);
     }
 }
