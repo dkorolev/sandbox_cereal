@@ -1,5 +1,4 @@
 // TODO(dkorolev): Add a death test for serialization parsing error.
-// TODO(dkorolev): Add JSON serialization test.
 // TODO(dkorolev): Look into how Cereal serializes field names.
 // TODO(dkorolev): Look into Cereal's polymorphism when serializing objects.
 
