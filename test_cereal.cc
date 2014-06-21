@@ -39,19 +39,17 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
     std::string serialized;
     // Initialize and serialize the object.
     {
+        SimpleType object;
+        object.int_ = 42;
+        object.string_ = "The Answer";
+        const char* const str = "Meh";
+        object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
+        object.map_["foo"] = "index 1";
+        object.map_["bar"] = "index 0";
+        object.map_["meh"] = "index 2";
+
         std::ostringstream os;
-        {  // Likely unnecessary, but, analogously with JSONOutputArchive, make sure to commit the the serialization.
-            cereal::BinaryOutputArchive ar(os);
-            SimpleType object;
-            object.int_ = 42;
-            object.string_ = "The Answer";
-            const char* const str = "Meh";
-            object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
-            object.map_["foo"] = "index 1";
-            object.map_["bar"] = "index 0";
-            object.map_["meh"] = "index 2";
-            ar(object);
-        }
+        (cereal::BinaryOutputArchive(os))(object);
         serialized = os.str();
     }
     // Assume and test that binary serialization format would not change.
@@ -81,19 +79,17 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
     std::string serialized;
     // Initialize and serialize the object.
     {
+        SimpleType object;
+        object.int_ = 42;
+        object.string_ = "The Answer";
+        const char* const str = "Meh";
+        object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
+        object.map_["foo"] = "index 1";
+        object.map_["bar"] = "index 0";
+        object.map_["meh"] = "index 2";
+
         std::ostringstream os;
-        {  // Should have cereal::JSONOutputArchive destructed before closing the stream.
-            cereal::JSONOutputArchive ar(os);
-            SimpleType object;
-            object.int_ = 42;
-            object.string_ = "The Answer";
-            const char* const str = "Meh";
-            object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
-            object.map_["foo"] = "index 1";
-            object.map_["bar"] = "index 0";
-            object.map_["meh"] = "index 2";
-            ar(object);
-        }
+        (cereal::JSONOutputArchive(os))(object);
         os << std::endl;  // Add a newline to match the golden file.
         serialized = os.str();
     }
