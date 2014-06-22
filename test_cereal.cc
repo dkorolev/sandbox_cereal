@@ -49,11 +49,11 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
         (cereal::BinaryOutputArchive(os))(object);
         serialized = os.str();
     }
-    // Assume and test that binary serialization format would not change.
+    // Test that binary serialization format has not changed.
     std::ifstream fi("simple_object.bin");
     std::string golden((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
     ASSERT_EQ(golden, serialized);
-    // De-serialize and the object and test its integrity.
+    // De-serialize the object and test its integrity.
     {
         std::istringstream is(serialized);
         cereal::BinaryInputArchive ar(is);
@@ -70,7 +70,7 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
         EXPECT_EQ("index 1", result.map_["foo"]);
         EXPECT_EQ("index 2", result.map_["meh"]);
     }
-    // Test that an exception will be thrown if the input can not be deserialized.
+    // Test that an exception is thrown if the input can not be deserialized.
     {
         std::istringstream is(serialized.substr(0, serialized.length() - 1));
         SimpleType tmp;
@@ -96,11 +96,11 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
         os << std::endl;  // Add a newline to match the golden file.
         serialized = os.str();
     }
-    // Assume and test that JSON serialization format would not change.
+    // Test that JSON serialization format has not changed.
     std::ifstream fi("simple_object.json");
     std::string golden((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
     ASSERT_EQ(golden, serialized);
-    // De-serialize and the object and test its integrity.
+    // De-serialize the object and test its integrity.
     {
         std::istringstream is(serialized);
         cereal::JSONInputArchive ar(is);
@@ -117,7 +117,7 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
         EXPECT_EQ("index 1", result.map_["foo"]);
         EXPECT_EQ("index 2", result.map_["meh"]);
     }
-    // Test that an exception will be thrown if the input can not be deserialized.
+    // Test that an exception is thrown if the input can not be deserialized.
     {
         std::istringstream is(serialized.substr(0, serialized.length() - 2));  // Minus the added newline as well.
         SimpleType tmp;
