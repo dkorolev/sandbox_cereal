@@ -1,4 +1,4 @@
-CPP=g++ -std=c++11
+CPP=g++ -std=c++11 -I .
 LDFLAGS=-pthread -lglog -lgflags -static
 
 SRC=$(wildcard test_*.cc)
@@ -13,7 +13,7 @@ test: all
 
 all: build ${EXE}
 
-build:
+build: cereal
 	mkdir -p build
 
 build/%.o: %.cc
@@ -22,5 +22,10 @@ build/%.o: %.cc
 ${EXE}: ${OBJ}
 	${CPP} -o $@ ${OBJ} ${GTEST_OBJ} ${LDFLAGS}
 
+# From git clone git@github.com:USCiLab/cereal.git
+# Installed into a directory that requires no extra flags beyond `-I .`.
+cereal:
+	tar xjf cereal.tar.bz2
+
 clean:
-	rm -rf build
+	rm -rf build cereal

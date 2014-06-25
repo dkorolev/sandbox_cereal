@@ -1,4 +1,5 @@
 build/
+cereal/
 *~
 
 # Compiled Object files
