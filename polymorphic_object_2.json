@@ -1,0 +1,22 @@
+{
+    "value0": {
+        "polymorphic_id": 2147483649,
+        "polymorphic_name": "DerivedTypeString",
+        "ptr_wrapper": {
+            "id": 2147483649,
+            "data": {
+                "value": "Seven"
+            }
+        }
+    },
+    "value1": {
+        "polymorphic_id": 2147483650,
+        "polymorphic_name": "DerivedTypeInt",
+        "ptr_wrapper": {
+            "id": 2147483650,
+            "data": {
+                "value": 7
+            }
+        }
+    }
+}

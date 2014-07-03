@@ -239,4 +239,23 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
         std::istringstream is(serialized.substr(0, serialized.length() - 2));  // Minus the added newline as well.
         ASSERT_THROW((cereal::JSONInputArchive(is))(one, two), cereal::Exception);
     }
+
+    // Testing the theory that the IDs are stream-based. They are!
+    {
+        std::shared_ptr<DerivedTypeInt> one(new DerivedTypeInt());
+        one->value = 7;
+        std::shared_ptr<DerivedTypeString> two(new DerivedTypeString());
+        two->value = "Seven";
+        std::shared_ptr<BaseType> pone(one);
+        std::shared_ptr<BaseType> ptwo(two);
+        std::ostringstream os;
+        (cereal::JSONOutputArchive(os))(ptwo, pone);
+        os << std::endl;  // Add a newline to match the golden file.
+        serialized = os.str();
+        {
+            std::ifstream fi("polymorphic_object_2.json");
+            std::string golden((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
+            ASSERT_EQ(golden, serialized);
+        }
+    }
 }
