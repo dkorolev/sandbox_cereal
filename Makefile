@@ -1,4 +1,4 @@
-CPP=g++ -std=c++11 -I .
+CPP=clang++ -std=c++11 -I .
 LDFLAGS=-pthread -lglog -lgflags -static
 
 SRC=$(wildcard test_*.cc)

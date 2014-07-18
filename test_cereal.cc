@@ -16,11 +16,14 @@
 
 #include "cereal/types/polymorphic.hpp"
 
+enum class XID : int;
+enum class XXID : int;
+
 class SimpleType {
   public:
     SimpleType() = default;
 
-    int int_;
+    XID int_;
     std::string string_;
     std::vector<uint8_t> vector_;
     std::map<std::string, std::string> map_;
@@ -37,10 +40,10 @@ struct BaseType {
 };
 
 struct DerivedTypeInt : BaseType {
-    int value;
+    XXID value;
     virtual std::string AsString() const {
         std::ostringstream os;
-        os << "DerivedTypeInt: " << value;
+        os << "DerivedTypeInt: " << int(value);
         return os.str();
     }
 
@@ -74,7 +77,7 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
     // Initialize and serialize the object.
     {
         SimpleType object;
-        object.int_ = 42;
+        object.int_ = XID(42);
         object.string_ = "The Answer";
         const char* const str = "Meh";
         object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
@@ -96,7 +99,7 @@ TEST(CerealTest, SimpleTypeBinarySerialization) {
         cereal::BinaryInputArchive ar(is);
         SimpleType result;
         ar(result);
-        EXPECT_EQ(42, result.int_);
+        EXPECT_EQ(42, int(result.int_));
         EXPECT_EQ("The Answer", result.string_);
         ASSERT_EQ(3, result.vector_.size());
         EXPECT_EQ('M', result.vector_[0]);
@@ -120,7 +123,7 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
     // Initialize and serialize the object.
     {
         SimpleType object;
-        object.int_ = 42;
+        object.int_ = XID(42);
         object.string_ = "The Answer";
         const char* const str = "Meh";
         object.vector_ = std::vector<uint8_t>(str, str + strlen(str));
@@ -143,7 +146,7 @@ TEST(CerealTest, SimpleTypeJSONSerialization) {
         cereal::JSONInputArchive ar(is);
         SimpleType result;
         ar(result);
-        EXPECT_EQ(42, result.int_);
+        EXPECT_EQ(42, int(result.int_));
         EXPECT_EQ("The Answer", result.string_);
         ASSERT_EQ(3, result.vector_.size());
         EXPECT_EQ('M', result.vector_[0]);
@@ -167,7 +170,7 @@ TEST(CerealTest, PolymorphicTypeBinarySerialization) {
     // Initialize and serialize two polymorphic objects.
     {
         std::shared_ptr<DerivedTypeInt> one(new DerivedTypeInt());
-        one->value = 42;
+        one->value = XXID(42);
         std::shared_ptr<DerivedTypeString> two(new DerivedTypeString());
         two->value = "The Answer";
         // Need to instantiate std::shared_ptr-s externally instead of using std::make_shared.
@@ -206,7 +209,7 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
     // Initialize and serialize two polymorphic objects.
     {
         std::shared_ptr<DerivedTypeInt> one(new DerivedTypeInt());
-        one->value = 42;
+        one->value = XXID(42);
         std::shared_ptr<DerivedTypeString> two(new DerivedTypeString());
         two->value = "The Answer";
         // Need to instantiate std::shared_ptr-s externally instead of using std::make_shared.
@@ -243,7 +246,7 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
     // Testing the theory that the IDs are stream-based. They are!
     {
         std::shared_ptr<DerivedTypeInt> one(new DerivedTypeInt());
-        one->value = 7;
+        one->value = XXID(7);
         std::shared_ptr<DerivedTypeString> two(new DerivedTypeString());
         two->value = "Seven";
         std::shared_ptr<BaseType> pone(one);
