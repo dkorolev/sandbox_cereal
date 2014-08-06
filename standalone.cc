@@ -18,8 +18,11 @@ int main() {
     {
         X x;
         x.s = "foo";
-        cereal::JSONOutputArchive ar(std::cout);
-        ar(x);
+        {
+            cereal::JSONOutputArchive ar(std::cout);
+            ar(x);
+        }
+        std::cout << std::endl;
     }
     {
         cereal::JSONInputArchive ar(std::cin);
