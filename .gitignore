@@ -1,5 +1,6 @@
 build/
 cereal/
+cereal-1.0.0/
 *~
 
 # Compiled Object files
