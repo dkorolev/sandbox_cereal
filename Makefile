@@ -25,7 +25,7 @@ ${EXE}: ${OBJ}
 # From git clone git@github.com:USCiLab/cereal.git
 # Installed into a directory that requires no extra flags beyond `-I .`.
 cereal:
-	tar xjf cereal.tar.bz2
+	tar xzf cereal-1.0.0.tar.gz && rm -rf cereal && ln -sf $$PWD/cereal-1.0.0/include/cereal $$PWD/cereal
 
 clean:
 	rm -rf build cereal
