@@ -1,10 +1,9 @@
 CPP=clang++ -std=c++11 -I .
-LDFLAGS=-pthread -lglog -lgflags -static
+LDFLAGS=-pthread
 
 SRC=$(wildcard test_*.cc)
 OBJ=$(SRC:%.cc=build/%.o)
-GTEST_OBJ=/usr/src/gtest/libgtest.a /usr/src/gtest/libgtest_main.a
-TEST_EXE=build/run_all_tests
+\TEST_EXE=build/run_all_tests
 STANDALONE_EXE=build/standalone
 
 .PHONY: all test clean
@@ -21,7 +20,7 @@ build/%.o: %.cc
 	${CPP} -o $@ -c $<
 
 ${TEST_EXE}: build/test_cereal.o
-	${CPP} -o $@ ${OBJ} ${GTEST_OBJ} ${LDFLAGS}
+	${CPP} -o $@ ${OBJ} ${LDFLAGS}
 
 ${STANDALONE_EXE}: build/standalone.o
 	${CPP} -o $@ $< ${LDFLAGS}

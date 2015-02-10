@@ -1,5 +1,4 @@
-#include <gtest/gtest.h>
-#include <glog/logging.h>
+#include "Bricks/3party/gtest/gtest-main.h"
 
 #include <vector>
 #include <string>
