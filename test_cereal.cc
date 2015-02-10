@@ -262,3 +262,28 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
         }
     }
 }
+
+struct NonSerializable {
+};
+
+// Helper compile-time test that certain type can be serialized via cereal.
+template <typename T, typename A = cereal::JSONOutputArchive>
+class is_cerealizeable {
+  private:
+    typedef char Yes;
+    typedef long No;
+    template <typename C>
+      static Yes YesOrNo(decltype(&C::template serialize<A>));
+    template <typename C>
+      static No YesOrNo(...);
+
+  public:
+    enum { value = sizeof(YesOrNo<T>(0)) == sizeof(Yes) };
+};
+
+TEST(CerealTest, IsCerealizableTest) {
+  EXPECT_TRUE(is_cerealizeable<SimpleType>::value);
+  EXPECT_TRUE(is_cerealizeable<DerivedTypeInt>::value);
+  EXPECT_TRUE(is_cerealizeable<DerivedTypeString>::value);
+  EXPECT_FALSE(is_cerealizeable<NonSerializable>::value);
+}
