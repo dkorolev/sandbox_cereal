@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "cereal/archives/json.hpp"
+#include "../cereal/archives/json.hpp"
 
 class X {
   public:
