@@ -13,7 +13,7 @@ test: all
 
 all: build ${TEST_EXE} ${STANDALONE_EXE}
 
-build: cereal
+build:
 	mkdir -p build
 
 build/%.o: %.cc
@@ -25,10 +25,12 @@ ${TEST_EXE}: build/test_cereal.o
 ${STANDALONE_EXE}: build/standalone.o
 	${CPP} -o $@ $< ${LDFLAGS}
 
-# From git clone git@github.com:USCiLab/cereal.git
-# Installed into a directory that requires no extra flags beyond `-I .`.
-cereal:
-	tar xzf cereal-1.0.0.tar.gz && rm -rf cereal && mv $$PWD/cereal-1.0.0/include/cereal $$PWD/cereal
+# Copied cereal headers with #include paths corrected into this repository to test on Windows -- D.K. 
+#
+# # From git clone git@github.com:USCiLab/cereal.git
+# # Installed into a directory that requires no extra flags beyond `-I .`.
+# cereal:
+# 	tar xzf cereal-1.0.0.tar.gz && rm -rf cereal && mv $$PWD/cereal-1.0.0/include/cereal $$PWD/cereal
 
 clean:
-	rm -rf build cereal
+	rm -rf build
