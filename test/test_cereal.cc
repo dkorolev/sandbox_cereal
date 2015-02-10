@@ -1,4 +1,4 @@
-#include "Bricks/3party/gtest/gtest-main.h"
+#include "../Bricks/3party/gtest/gtest-main.h"
 
 #include <vector>
 #include <string>
@@ -6,14 +6,14 @@
 #include <fstream>
 #include <sstream>
 
-#include "cereal/archives/binary.hpp"
-#include "cereal/archives/json.hpp"
+#include "../cereal/archives/binary.hpp"
+#include "../cereal/archives/json.hpp"
 
-#include "cereal/types/string.hpp"
-#include "cereal/types/vector.hpp"
-#include "cereal/types/map.hpp"
+#include "../cereal/types/string.hpp"
+#include "../cereal/types/vector.hpp"
+#include "../cereal/types/map.hpp"
 
-#include "cereal/types/polymorphic.hpp"
+#include "../cereal/types/polymorphic.hpp"
 
 #ifndef _WIN32
 enum class XID : int;
