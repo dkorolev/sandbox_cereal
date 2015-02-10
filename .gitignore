@@ -23,3 +23,12 @@ cereal-1.0.0/
 *.exe
 *.out
 *.app
+
+# Microsoft Visual Studio
+
+Debug
+Release
+*.suo
+*.filters
+*.sdf
+*.opensdf

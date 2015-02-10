@@ -15,8 +15,13 @@
 
 #include "cereal/types/polymorphic.hpp"
 
+#ifndef _WIN32
 enum class XID : int;
 enum class XXID : int;
+#else
+typedef int XID;
+typedef int XXID;
+#endif
 
 class SimpleType {
   public:
@@ -221,9 +226,11 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
         serialized = os.str();
     }
     // Test that JSON serialization format has not changed.
-    std::ifstream fi("polymorphic_object.json");
-    std::string golden((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
-    ASSERT_EQ(golden, serialized);
+    {
+        std::ifstream fi("polymorphic_object.json");
+        std::string golden((std::istreambuf_iterator<char>(fi)), std::istreambuf_iterator<char>());
+        ASSERT_EQ(golden, serialized);
+    }
     // De-serialize two polymorphic objects and test their integrity.
     {
         std::shared_ptr<BaseType> one;
