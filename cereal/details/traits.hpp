@@ -39,7 +39,7 @@
 #include <type_traits>
 #include <typeindex>
 
-#include <cereal/access.hpp>
+#include "../access.hpp"
 
 namespace cereal
 {

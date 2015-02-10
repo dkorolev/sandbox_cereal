@@ -37,7 +37,7 @@
 #include <unordered_map>
 #include <stdexcept>
 
-#include <cereal/details/static_object.hpp>
+#include "../details/static_object.hpp"
 
 namespace cereal
 {
