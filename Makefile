@@ -3,7 +3,7 @@ LDFLAGS=-pthread
 
 SRC=$(wildcard test_*.cc)
 OBJ=$(SRC:%.cc=build/%.o)
-\TEST_EXE=build/run_all_tests
+TEST_EXE=build/run_all_tests
 STANDALONE_EXE=build/standalone
 
 .PHONY: all test clean
@@ -28,7 +28,7 @@ ${STANDALONE_EXE}: build/standalone.o
 # From git clone git@github.com:USCiLab/cereal.git
 # Installed into a directory that requires no extra flags beyond `-I .`.
 cereal:
-	tar xzf cereal-1.0.0.tar.gz && rm -rf cereal && ln -sf $$PWD/cereal-1.0.0/include/cereal $$PWD/cereal
+	tar xzf cereal-1.0.0.tar.gz && rm -rf cereal && mv $$PWD/cereal-1.0.0/include/cereal $$PWD/cereal
 
 clean:
 	rm -rf build cereal
