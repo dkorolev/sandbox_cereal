@@ -23,10 +23,7 @@ typedef int XID;
 typedef int XXID;
 #endif
 
-class SimpleType {
-  public:
-    SimpleType() = default;
-
+struct SimpleType {
     XID int_;
     std::string string_;
     std::vector<uint8_t> vector_;
@@ -263,41 +260,66 @@ TEST(CerealTest, PolymorphicTypeJSONSerialization) {
     }
 }
 
+struct OnlyWriteSerializable {
+    std::string s = "passed";
+    void serialize(cereal::JSONOutputArchive& ar) {
+        ar(CEREAL_NVP(s));
+    }
+};
+
+struct OnlyReadSerializable {
+    std::string s = "passed";
+    void serialize(cereal::JSONInputArchive& ar) {
+        ar(CEREAL_NVP(s));
+    }
+};
+
 struct NonSerializable {
 };
 
 // Helper compile-time test that certain type can be serialized via cereal.
-// TODO(dkorolev): Eventually merge these two versions of code. I could not figure out in ~2 hours -- D.K.
-#ifndef _WIN32
-template <typename T, typename A = cereal::JSONOutputArchive>
-class is_cerealizeable {
-  private:
-    typedef char Yes;
-    typedef long No; 
-    template <typename C>
-      static Yes YesOrNo(decltype(&C::template serialize<A>));
-    template <typename C>
-      static No YesOrNo(...);
+template<typename T> using is_read_cerealizeable = cereal::traits::is_input_serializable<T, cereal::JSONInputArchive>;
+template<typename T> using is_write_cerealizeable = cereal::traits::is_output_serializable<T, cereal::JSONOutputArchive>;
 
-  public:
-    enum { value = sizeof(YesOrNo<T>(0)) == sizeof(Yes) };
+template <typename T> struct is_cerealizeable {
+  constexpr static bool value = is_read_cerealizeable<T>::value && is_write_cerealizeable<T>::value;
 };
-#else
-template <typename T>
-class is_cerealizeable {
-private:
-	struct meh {};
-	template<typename WUT> static decltype(std::declval<WUT>().serialize(std::declval<cereal::JSONOutputArchive>())) huh();
-	template<typename WUT> static meh huh(...);
 
-public:
-	constexpr static bool value = !std::is_same<decltype(huh<T>()), meh>::value;
-};
-#endif
+TEST(CerealTest, OneWayJSONSerialization) {
+    std::string serialized;
+    // Initialize and serialize the object.
+    {
+        OnlyWriteSerializable object;
+        object.s = "yeah";
+        std::ostringstream os;
+        (cereal::JSONOutputArchive(os))(object);
+        os << std::endl;  // Add a newline to match the golden file.
+        serialized = os.str();
+    }
+    // De-serialize the object and test its integrity.
+    {
+        std::istringstream is(serialized);
+        cereal::JSONInputArchive ar(is);
+        OnlyReadSerializable result;
+        ar(result);
+        EXPECT_EQ("yeah", result.s);
+    }
+}
 
-TEST(CerealTest, IsCerealizableTest) {
+TEST(CerealTest, IsCerealizableTests) {
   EXPECT_TRUE(is_cerealizeable<SimpleType>::value);
   EXPECT_TRUE(is_cerealizeable<DerivedTypeInt>::value);
   EXPECT_TRUE(is_cerealizeable<DerivedTypeString>::value);
+
+  EXPECT_FALSE(is_cerealizeable<OnlyReadSerializable>::value);
+  EXPECT_TRUE(is_read_cerealizeable<OnlyReadSerializable>::value);
+  EXPECT_FALSE(is_write_cerealizeable<OnlyReadSerializable>::value);
+
+  EXPECT_FALSE(is_cerealizeable<OnlyWriteSerializable>::value);
+  EXPECT_FALSE(is_read_cerealizeable<OnlyWriteSerializable>::value);
+  EXPECT_TRUE(is_write_cerealizeable<OnlyWriteSerializable>::value);
+
   EXPECT_FALSE(is_cerealizeable<NonSerializable>::value);
+  EXPECT_FALSE(is_read_cerealizeable<NonSerializable>::value);
+  EXPECT_FALSE(is_write_cerealizeable<NonSerializable>::value);
 }
