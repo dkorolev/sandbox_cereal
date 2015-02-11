@@ -278,11 +278,11 @@ struct NonSerializable {
 };
 
 // Helper compile-time test that certain type can be serialized via cereal.
-template<typename T> using is_read_cerealizeable = cereal::traits::is_input_serializable<T, cereal::JSONInputArchive>;
-template<typename T> using is_write_cerealizeable = cereal::traits::is_output_serializable<T, cereal::JSONOutputArchive>;
+template<typename T> using is_read_cerealizable = cereal::traits::is_input_serializable<T, cereal::JSONInputArchive>;
+template<typename T> using is_write_cerealizable = cereal::traits::is_output_serializable<T, cereal::JSONOutputArchive>;
 
-template <typename T> struct is_cerealizeable {
-  constexpr static bool value = is_read_cerealizeable<T>::value && is_write_cerealizeable<T>::value;
+template <typename T> struct is_cerealizable {
+  constexpr static bool value = is_read_cerealizable<T>::value && is_write_cerealizable<T>::value;
 };
 
 TEST(CerealTest, OneWayJSONSerialization) {
@@ -307,19 +307,19 @@ TEST(CerealTest, OneWayJSONSerialization) {
 }
 
 TEST(CerealTest, IsCerealizableTests) {
-  EXPECT_TRUE(is_cerealizeable<SimpleType>::value);
-  EXPECT_TRUE(is_cerealizeable<DerivedTypeInt>::value);
-  EXPECT_TRUE(is_cerealizeable<DerivedTypeString>::value);
+  EXPECT_TRUE(is_cerealizable<SimpleType>::value);
+  EXPECT_TRUE(is_cerealizable<DerivedTypeInt>::value);
+  EXPECT_TRUE(is_cerealizable<DerivedTypeString>::value);
 
-  EXPECT_FALSE(is_cerealizeable<OnlyReadSerializable>::value);
-  EXPECT_TRUE(is_read_cerealizeable<OnlyReadSerializable>::value);
-  EXPECT_FALSE(is_write_cerealizeable<OnlyReadSerializable>::value);
+  EXPECT_FALSE(is_cerealizable<OnlyReadSerializable>::value);
+  EXPECT_TRUE(is_read_cerealizable<OnlyReadSerializable>::value);
+  EXPECT_FALSE(is_write_cerealizable<OnlyReadSerializable>::value);
 
-  EXPECT_FALSE(is_cerealizeable<OnlyWriteSerializable>::value);
-  EXPECT_FALSE(is_read_cerealizeable<OnlyWriteSerializable>::value);
-  EXPECT_TRUE(is_write_cerealizeable<OnlyWriteSerializable>::value);
+  EXPECT_FALSE(is_cerealizable<OnlyWriteSerializable>::value);
+  EXPECT_FALSE(is_read_cerealizable<OnlyWriteSerializable>::value);
+  EXPECT_TRUE(is_write_cerealizable<OnlyWriteSerializable>::value);
 
-  EXPECT_FALSE(is_cerealizeable<NonSerializable>::value);
-  EXPECT_FALSE(is_read_cerealizeable<NonSerializable>::value);
-  EXPECT_FALSE(is_write_cerealizeable<NonSerializable>::value);
+  EXPECT_FALSE(is_cerealizable<NonSerializable>::value);
+  EXPECT_FALSE(is_read_cerealizable<NonSerializable>::value);
+  EXPECT_FALSE(is_write_cerealizable<NonSerializable>::value);
 }
