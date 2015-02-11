@@ -5,6 +5,7 @@
 #include <map>
 #include <fstream>
 #include <sstream>
+// #include <type_traits>
 
 #include "../cereal/archives/binary.hpp"
 #include "../cereal/archives/json.hpp"
@@ -32,8 +33,6 @@ class SimpleType {
     std::vector<uint8_t> vector_;
     std::map<std::string, std::string> map_;
 
-  private:
-    friend class cereal::access;
     template<class A> void serialize(A& ar) {
         ar(CEREAL_NVP(int_), CEREAL_NVP(string_), CEREAL_NVP(vector_), CEREAL_NVP(map_));
     }
@@ -51,9 +50,7 @@ struct DerivedTypeInt : BaseType {
         return os.str();
     }
 
-  private:
-    friend class cereal::access;
-    template<class A> void serialize(A& ar) {
+	template<class A> void serialize(A& ar) {
         ar(CEREAL_NVP(value));
     }
 };
@@ -66,9 +63,7 @@ struct DerivedTypeString : BaseType {
         return os.str();
     }
 
-  private:
-    friend class cereal::access;
-    template<class A> void serialize(A& ar) {
+	template<class A> void serialize(A& ar) {
         ar(CEREAL_NVP(value));
     }
 };
@@ -273,18 +268,15 @@ struct NonSerializable {
 };
 
 // Helper compile-time test that certain type can be serialized via cereal.
-template <typename T, typename A = cereal::JSONOutputArchive>
+template <typename T>
 class is_cerealizeable {
-  private:
-    typedef char Yes;
-    typedef long No;
-    template <typename C>
-      static Yes YesOrNo(decltype(&C::template serialize<A>));
-    template <typename C>
-      static No YesOrNo(...);
+private:
+	struct meh {};
+	template<typename WUT> static decltype(std::declval<WUT>().serialize(std::declval<cereal::JSONOutputArchive>())) huh();
+	template<typename WUT> static meh huh(...);
 
-  public:
-    enum { value = sizeof(YesOrNo<T>(0)) == sizeof(Yes) };
+public:
+	constexpr static bool value = !std::is_same<decltype(huh<T>()), meh>::value;
 };
 
 TEST(CerealTest, IsCerealizableTest) {
