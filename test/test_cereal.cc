@@ -5,7 +5,6 @@
 #include <map>
 #include <fstream>
 #include <sstream>
-// #include <type_traits>
 
 #include "../cereal/archives/binary.hpp"
 #include "../cereal/archives/json.hpp"
@@ -268,6 +267,22 @@ struct NonSerializable {
 };
 
 // Helper compile-time test that certain type can be serialized via cereal.
+// TODO(dkorolev): Eventually merge these two versions of code. I could not figure out in ~2 hours -- D.K.
+#ifndef _WIN32
+template <typename T, typename A = cereal::JSONOutputArchive>
+class is_cerealizeable {
+  private:
+    typedef char Yes;
+    typedef long No; 
+    template <typename C>
+      static Yes YesOrNo(decltype(&C::template serialize<A>));
+    template <typename C>
+      static No YesOrNo(...);
+
+  public:
+    enum { value = sizeof(YesOrNo<T>(0)) == sizeof(Yes) };
+};
+#else
 template <typename T>
 class is_cerealizeable {
 private:
@@ -278,6 +293,7 @@ private:
 public:
 	constexpr static bool value = !std::is_same<decltype(huh<T>()), meh>::value;
 };
+#endif
 
 TEST(CerealTest, IsCerealizableTest) {
   EXPECT_TRUE(is_cerealizeable<SimpleType>::value);
