@@ -274,6 +274,22 @@ struct OnlyReadSerializable {
     }
 };
 
+struct OnlyWriteSerializable2 {
+    std::string s = "passed";
+    template<typename T>
+    void save(T& ar) const {
+        ar(CEREAL_NVP(s));
+    }
+};
+
+struct OnlyReadSerializable2 {
+    std::string s = "passed";
+    template<typename T>
+    void load(T& ar) {
+        ar(CEREAL_NVP(s));
+    }
+};
+
 struct NonSerializable {
 };
 
@@ -322,4 +338,12 @@ TEST(CerealTest, IsCerealizableTests) {
   EXPECT_FALSE(is_cerealizable<NonSerializable>::value);
   EXPECT_FALSE(is_read_cerealizable<NonSerializable>::value);
   EXPECT_FALSE(is_write_cerealizable<NonSerializable>::value);
+
+  EXPECT_FALSE(is_cerealizable<OnlyReadSerializable2>::value);
+  EXPECT_TRUE(is_read_cerealizable<OnlyReadSerializable2>::value);
+  EXPECT_FALSE(is_write_cerealizable<OnlyReadSerializable2>::value);
+
+  EXPECT_FALSE(is_cerealizable<OnlyWriteSerializable2>::value);
+  EXPECT_FALSE(is_read_cerealizable<OnlyWriteSerializable2>::value);
+  EXPECT_TRUE(is_write_cerealizable<OnlyWriteSerializable2>::value);
 }
