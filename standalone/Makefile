@@ -7,7 +7,7 @@ STANDALONE_EXE=build/standalone
 
 .PHONY: all test clean
 
-all: build ${STANDALONE_EXE}
+all: build ${STANDALONE_EXE} build/traits
 
 build:
 	mkdir -p build
@@ -16,6 +16,9 @@ build/%.o: %.cc
 	${CPP} -o $@ -c $<
 
 ${STANDALONE_EXE}: build/standalone.o
+	${CPP} -o $@ $< ${LDFLAGS}
+
+build/traits: build/traits.o
 	${CPP} -o $@ $< ${LDFLAGS}
 
 clean:
